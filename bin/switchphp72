@@ -6,17 +6,19 @@ echo "| PHP 7.2 |"
 echo "+---------|"
 echo ""
 
-sudo update-alternatives --set php /usr/bin/php7.2
+sudo phpdismod rdkafka                                > /dev/null
 
-sudo pecl config-set php_ini /etc/php/7.2/cli/php.ini
-sudo pecl config-set ext_dir /usr/lib/php/20170718
-sudo pecl config-set bin_dir /usr/bin/
-sudo pecl config-set php_bin /usr/bin/php7.2
-sudo pecl config-set php_suffix 7.2
+sudo update-alternatives --set php /usr/bin/php7.2    > /dev/null
 
-sudo pecl uninstall rdkafka
-sudo pecl install rdkafka
+sudo pecl config-set php_ini /etc/php/7.2/cli/php.ini > /dev/null
+sudo pecl config-set ext_dir /usr/lib/php/20170718    > /dev/null
+sudo pecl config-set bin_dir /usr/bin/                > /dev/null
+sudo pecl config-set php_bin /usr/bin/php7.2          > /dev/null
+sudo pecl config-set php_suffix 7.2                   > /dev/null
 
-echo ""
+sudo pecl uninstall rdkafka                           > /dev/null
+sudo pecl install rdkafka                             > /dev/null
+sudo phpenmod rdkafka                                 > /dev/null
+
 php -v
 echo ""
