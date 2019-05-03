@@ -6,19 +6,55 @@ echo "| PHP 7.0 |"
 echo "+---------|"
 echo ""
 
-sudo phpdismod rdkafka                                > /dev/null
+sudo phpdismod rdkafka mongodb redis
+sudo pecl uninstall rdkafka mongodb redis
 
-sudo update-alternatives --set php /usr/bin/php7.0    > /dev/null
+sudo apt install php7.0
+sudo update-alternatives --set php /usr/bin/php7.0
 
-sudo pecl config-set php_ini /etc/php/7.0/cli/php.ini > /dev/null
-sudo pecl config-set ext_dir /usr/lib/php/20151012    > /dev/null
-sudo pecl config-set bin_dir /usr/bin/                > /dev/null
-sudo pecl config-set php_bin /usr/bin/php7.0          > /dev/null
-sudo pecl config-set php_suffix 7.0                   > /dev/null
+sudo pecl config-set php_ini /etc/php/7.0/cli/php.ini
+sudo pecl config-set ext_dir /usr/lib/php/20151012
+sudo pecl config-set bin_dir /usr/bin/
+sudo pecl config-set php_bin /usr/bin/php7.0
+sudo pecl config-set php_suffix 7.0
+sudo pear config-set temp_dir /tmp/pear/temp_7.0
 
-sudo pecl uninstall rdkafka                           > /dev/null
-sudo pecl install rdkafka                             > /dev/null
-sudo phpenmod rdkafka                                 > /dev/null
+# use right phpize
+sudo apt remove -y php-dev php5.6 php7.0 php7.0 php7.2 php7.3
+sudo rm -rf /usr/bin/phpize
+sudo apt install php7.0-dev
 
+# rdkafka
+cd /tmp
+rm -rf librdkafka && \
+    git clone https://github.com/edenhill/librdkafka.git && \
+    cd librdkafka && \
+    git checkout tags/v0.11.0 && \
+    ./configure && \
+    make && \
+    sudo make install && \
+    cd ../
+rm -rf php-rdkafka && \
+    git clone https://github.com/arnaud-lb/php-rdkafka.git && \
+    cd php-rdkafka/ && \
+    git checkout tags/3.0.3 && \
+    phpize7.0 && \
+    ./configure && \
+    make && \
+    sudo make install && \
+    cd ../
+sudo phpenmod rdkafka
+
+# mongo
+sudo pecl install mongodb
+sudo phpenmod mongodb
+
+# redis
+echo no | sudo pecl install redis
+sudo phpenmod redis
+
+echo "+---------------------------------------------------------------------------------------------+"
 php -v
+echo "+---------------------------------------------------------------------------------------------+"
+php -i | grep -E "Redis|Mongo|rdkafka"
 echo ""
